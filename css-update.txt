@@ -1,0 +1,6 @@
+	@ShutdownOnFailedCommand 1';
+	@NoPromptForPassword 1';
+	login anonymous';
+	force_install_dir /home/steam/css-dedicated/';
+	app_update 232330';
+	quit';
