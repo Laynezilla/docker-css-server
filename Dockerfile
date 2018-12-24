@@ -1,15 +1,18 @@
 FROM cm2network/steamcmd
 
+# Switch back to root to install additional packages
 USER root
 
 RUN apt-get update -y && \
-	apt-get install -y wget nano sudo lib32tinfo5 locales locales-all && \
+	apt-get install -y wget unzip nano sudo lib32tinfo5 locales locales-all && \
 	rm -rf /var/lib/apt/lists/*
 
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8
 
+# Use steam user for rest of install
 USER steam
 
+# Install CS:S dedicated server
 RUN mkdir /home/steam/css-dedicated && \
 	./home/steam/steamcmd/steamcmd.sh +login anonymous \
 	+force_install_dir /home/steam/css-dedicated \
@@ -20,15 +23,29 @@ RUN mkdir /home/steam/css-dedicated && \
 RUN curl https://raw.githubusercontent.com/Laynezilla/docker-css-server/master/css-update.txt -o /home/steam/css-dedicated/css_update.txt
 	
 # Fix error
-#RUN mkdir /home/steam/.steam/sdk32 && \
-#	cp /home/steam/css-dedicated/bin/steamclient.so /home/steam/.steam/sdk32/steamclient.so
+RUN mkdir /home/steam/.steam/sdk32 && \
+	ln -s /home/steam/css-dedicated/bin/steamclient.so /home/steam/.steam/sdk32/steamclient.so
 
-#ENV SRCDS_FPSMAX=300 SRCDS_TICKRATE=128 SRCDS_PORT=27015 SRCDS_TV_PORT=27020 SRCDS_MAXPLAYERS=14 SRCDS_TOKEN=0 SRCDS_RCONPW="changeme" SRCDS_PW="changeme"
-
-#VOLUME /home/steam/css-dedicated
-
-# Set Entrypoint; Technically 2 steps: 1. Update server, 2. Start server
-#ENTRYPOINT ./home/steam/steamcmd/steamcmd.sh +login anonymous +force_install_dir /home/steam/css-dedicated +app_update 232330 +quit && \
-#	./home/steam/css-dedicated/srcds_run -game cstrike -console -autoupdate -steam_dir /home/steam/steamcmd/ -steamcmd_script /home/steam/css-dedicated/csgo_update.txt -usercon +fps_max $SRCDS_FPSMAX -tickrate $SRCDS_TICKRATE -port $SRCDS_PORT -tv_port $SRCDS_TV_PORT -maxplayers_override $SRCDS_MAXPLAYERS +game_type 0 +game_mode 1 +mapgroup mg_active +map de_dust2 +sv_setsteamaccount $SRCDS_TOKEN +rcon_password $SRCDS_RCONPW +sv_password $SRCDS_PW +sv_region $SRCDS_REGION
+# Install plugins
+RUN curl https://mms.alliedmods.net/mmsdrop/1.10/mmsource-1.10.7-git968-linux.tar.gz -o /home/steam/mmsource.tar.gz && \
+	tar -xzvf /home/steam/mmsource.tar.gz -C /home/steam/css-dedicated/cstrike && \
+	rm /home/steam/mmsource.tar.gz && \
+	curl https://sm.alliedmods.net/smdrop/1.9/sourcemod-1.9.0-git6269-linux.tar.gz -o /home/steam/sourcemod.tar.gz && \
+	tar -xzvf /home/steam/sourcemod.tar.gz -C /home/steam/css-dedicated/cstrike && \
+	rm /home/steam/sourcemod.tar.gz && \
+	wget -O /home/steam/sm_noblock.zip https://forums.alliedmods.net/attachment.php?attachmentid=74064&d=1285431495 && \
+	unzip -o /home/steam/sm_noblock.zip -d /home/steam/css-dedicated/cstrike && \
+	rm /home/steam/sm_noblock.zip && \
+	wget -O /home/steam/sm_teamchange.zip "https://forums.alliedmods.net/attachment.php?attachmentid=110542&d=1349628533" && \
+	unzip -o /home/steam/sm_teamchange.zip -d /home/steam/css-dedicated/cstrike && \
+	rm /home/steam/sm_teamchange.zip 
+#	&& wget -O /home/steam/sm_ggdm.zip "https://forums.alliedmods.net/attachment.php?attachmentid=108943&d=1346584450" && \
+#	unzip -o /home/steam/sm_ggdm.zip -d /home/steam/css-dedicated/cstrike && \
+#	rm /home/steam/sm_ggdm.zip && \
+#	wget -O /home/steam/sm_gungame.zip "https://forums.alliedmods.net/attachment.php?s=716ef65609b491b4a34670e767887027&attachmentid=133712&d=1400696532" && \
+#	unzip -o /home/steam/sm_gungame.zip -d /home/steam/css-dedicated/cstrike && \
+#	rm /home/steam/sm_gungame.zip && \
+#	mv /home/steam/css-dedicated/cstrike/addons/sourcemod/plugins/gungame.smx /home/steam/css-dedicated/cstrike/addons/sourcemod/plugins/disabled/ && \
+#	mv /home/steam/css-dedicated/cstrike/addons/sourcemod/plugins/disabled/gungame_sdkhooks.smx /home/steam/css-dedicated/cstrike/addons/sourcemod/plugins/
 
 EXPOSE 27015
