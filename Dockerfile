@@ -1,6 +1,15 @@
 FROM cm2network/steamcmd
 
-# app might need to be 240?
+USER root
+
+RUN apt-get update -y && \
+	apt-get install -y wget nano sudo lib32tinfo5 locales locales-all && \
+	rm -rf /var/lib/apt/lists/*
+
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8
+
+USER steam
+
 RUN mkdir /home/steam/css-dedicated && \
 	./home/steam/steamcmd/steamcmd.sh +login anonymous \
 	+force_install_dir /home/steam/css-dedicated \
@@ -9,14 +18,10 @@ RUN mkdir /home/steam/css-dedicated && \
 
 # Create update script
 RUN curl https://raw.githubusercontent.com/Laynezilla/docker-css-server/master/css-update.txt -o /home/steam/css-dedicated/css_update.txt
-
-RUN apt-get update -y && \
-	apt-get install -y wget nano sudo lib32tinfo5 locales && \
-	rm -rf /var/lib/apt/lists/*
 	
 # Fix error
-RUN mkdir /home/steam/.steam/sdk32 && \
-	cp /home/steam/css-dedicated/bin/steamclient.so /home/steam/.steam/sdk32/steamclient.so
+#RUN mkdir /home/steam/.steam/sdk32 && \
+#	cp /home/steam/css-dedicated/bin/steamclient.so /home/steam/.steam/sdk32/steamclient.so
 
 #ENV SRCDS_FPSMAX=300 SRCDS_TICKRATE=128 SRCDS_PORT=27015 SRCDS_TV_PORT=27020 SRCDS_MAXPLAYERS=14 SRCDS_TOKEN=0 SRCDS_RCONPW="changeme" SRCDS_PW="changeme"
 
