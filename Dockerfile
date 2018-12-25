@@ -4,7 +4,7 @@ FROM cm2network/steamcmd
 USER root
 
 RUN apt-get update -y && \
-	apt-get install -y wget unzip nano sudo lib32tinfo5 locales && \
+	apt-get install -y wget unzip nano sudo lib32tinfo5 locales locales-all && \
 	rm -rf /var/lib/apt/lists/*
 
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8
@@ -39,13 +39,9 @@ RUN curl https://mms.alliedmods.net/mmsdrop/1.10/mmsource-1.10.7-git968-linux.ta
 	wget -O /home/steam/sm_teamchange.zip "https://forums.alliedmods.net/attachment.php?attachmentid=110542&d=1349628533" && \
 	unzip -o /home/steam/sm_teamchange.zip -d /home/steam/css-dedicated/cstrike && \
 	rm /home/steam/sm_teamchange.zip 
-#	&& wget -O /home/steam/sm_ggdm.zip "https://forums.alliedmods.net/attachment.php?attachmentid=108943&d=1346584450" && \
-#	unzip -o /home/steam/sm_ggdm.zip -d /home/steam/css-dedicated/cstrike && \
-#	rm /home/steam/sm_ggdm.zip && \
-#	wget -O /home/steam/sm_gungame.zip "https://forums.alliedmods.net/attachment.php?s=716ef65609b491b4a34670e767887027&attachmentid=133712&d=1400696532" && \
-#	unzip -o /home/steam/sm_gungame.zip -d /home/steam/css-dedicated/cstrike && \
-#	rm /home/steam/sm_gungame.zip && \
-#	mv /home/steam/css-dedicated/cstrike/addons/sourcemod/plugins/gungame.smx /home/steam/css-dedicated/cstrike/addons/sourcemod/plugins/disabled/ && \
-#	mv /home/steam/css-dedicated/cstrike/addons/sourcemod/plugins/disabled/gungame_sdkhooks.smx /home/steam/css-dedicated/cstrike/addons/sourcemod/plugins/
 
+# https://developer.valvesoftware.com/wiki/Source_Dedicated_Server
 EXPOSE 27015
+
+# Start server with basic settings. Add arguments as needed
+CMD /home/steam/css-dedicated/srcds_run -game cstrike -console +map cs_italy
