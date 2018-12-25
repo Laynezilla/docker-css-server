@@ -4,7 +4,7 @@ FROM cm2network/steamcmd
 USER root
 
 RUN apt-get update -y && \
-	apt-get install -y wget unzip nano sudo lib32tinfo5 locales locales-all && \
+	apt-get install -y wget unzip nano sudo lib32tinfo5 locales && \
 	rm -rf /var/lib/apt/lists/*
 
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8
@@ -33,7 +33,7 @@ RUN curl https://mms.alliedmods.net/mmsdrop/1.10/mmsource-1.10.7-git968-linux.ta
 	curl https://sm.alliedmods.net/smdrop/1.9/sourcemod-1.9.0-git6269-linux.tar.gz -o /home/steam/sourcemod.tar.gz && \
 	tar -xzvf /home/steam/sourcemod.tar.gz -C /home/steam/css-dedicated/cstrike && \
 	rm /home/steam/sourcemod.tar.gz && \
-	wget -O /home/steam/sm_noblock.zip https://forums.alliedmods.net/attachment.php?attachmentid=74064&d=1285431495 && \
+	wget -O /home/steam/sm_noblock.zip "https://forums.alliedmods.net/attachment.php?attachmentid=74064&d=1285431495" && \
 	unzip -o /home/steam/sm_noblock.zip -d /home/steam/css-dedicated/cstrike && \
 	rm /home/steam/sm_noblock.zip && \
 	wget -O /home/steam/sm_teamchange.zip "https://forums.alliedmods.net/attachment.php?attachmentid=110542&d=1349628533" && \
