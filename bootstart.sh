@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Require clients to download workshop resources
-echo "resource.AddWorkshop("$WORKSHOP_COLLECTION")" > ./gmod/garrysmod/lua/autorun/server/workshop.lua;
-
 # Update all content
 ./steamcmd/steamcmd.sh +login anonymous +force_install_dir ./css-dedicated +app_update 232330 +quit;
 
